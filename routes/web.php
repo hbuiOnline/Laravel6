@@ -57,9 +57,41 @@ Route::get('/about', function () {
     ]);
 });
 
+
+
+//This will route to Controller, then function index()
+Route::get('/articles', 'ArticlesController@index');
+
+Route::post('/articles', 'ArticlesController@store');
+Route::get('/articles/create', 'ArticlesController@create');
+
 //This will route with a wild car which fetch a specific articleID
 //->To Controller, then function show()
 Route::get('/articles/{article}', 'ArticlesController@show');
 
-//This will route to Controller, then function showAll()
-Route::get('/articles', 'ArticlesController@showAll');
+Route::get('/articles/{article}/edit', 'ArticlesController@edit');
+
+
+
+//RESTful
+//GET, POST, PUT, DELETE
+
+// GET /articles
+// GET /articles/:id
+// GET is for reading
+// PUT /articles/:id
+// PUT is for update
+// DELETE is for delete
+// POST is for create new (getting from submitted form)
+
+// GET /videos
+// GET /videos/2
+// GET /videos/create
+// POST /videos  to store the video that created
+// GET /videos/2/edit
+// PUT /videos/2 Updating it
+// DELETE /videos/2
+
+// GET /videos/subscibe
+
+// POST /videos/subscriptions => VideosSubsciprtionController@store
