@@ -8,23 +8,19 @@
 @section('content')
 <div id="wrapper">
     <div id="page" class="container">
-        <h1 class="heading has-text-weight-bold is-size-4">New Article</h1>
+        <h1 class="heading has-text-weight-bold is-size-4">Update Article</h1>
 
-        <form method="POST" action="/articles">
-            @csrf
+        <form method="POST" action="/articles/ {{ $article->id }}">
+            @csrf {{-- always try to use this --}}
             {{-- hidden input with name _token with the value of hashed --}}
             {{-- This protect us from mal user from another server making form request on our server --}}
+            @method('PUT') {{-- use POST for the browswer, and use this line to convert --}}
 
             <div class="field">
                 <label class="label" for="title">Title</label>
 
                 <div class="control">
-                    <input class="input @error('title') is-danger @enderror" type="text" name="title" id="title"
-                        value="{{ old('title') }}">
-
-                    @error('title')
-                    <p class="help is-danger">{{ $errors->first('title') }}</p>
-                    @enderror
+                    <input class="input" type="text" name="title" id="title" value="{{ $article->title }}">
                 </div>
             </div>
 
@@ -32,11 +28,7 @@
                 <label class="label" for="excerpt">Exceprt</label>
 
                 <div class="control">
-                    <textarea class="textarea @error('excerpt') is-danger @enderror" name="excerpt"
-                        id="excerpt">{{ old('excerpt') }}</textarea>
-                    @error('excerpt')
-                    <p class="help is-danger">{{ $errors->first('excerpt') }}</p>
-                    @enderror
+                    <textarea class="textarea" name="excerpt" id="excerpt">{{ $article->excerpt }}</textarea>
                 </div>
             </div>
 
@@ -44,11 +36,7 @@
                 <label class="label" for="body">Body</label>
 
                 <div class="control">
-                    <textarea class="textarea @error('body') is-danger @enderror" name="body"
-                        id="body">{{ old('body') }}</textarea>
-                    @error('body')
-                    <p class="help is-danger">{{ $errors->first('body') }}</p>
-                    @enderror
+                    <textarea class="textarea" name="body" id="body">{{ $article->body }}</textarea>
                 </div>
             </div>
 
