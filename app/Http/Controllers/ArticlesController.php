@@ -22,11 +22,11 @@ class ArticlesController extends Controller
         ]);
     }
 
-    public function show($id) //Show a specific one
+    public function show(Article $article) //Intance with a wildcard from Route::
     {
         //Show a single resource
 
-        $article = Article::find($id);
+        // $article = Article::findOrFail($id); //if not found, throws 404
 
         return view('articles.show', [
             'article' => $article
@@ -40,53 +40,29 @@ class ArticlesController extends Controller
         return view('articles.create');
     }
 
-    public function store()
+    public function store() //Persist the new resource
     {
         //validation
-        request()->validate([
-            'title' => 'required',
-            'excerpt' => 'required',
-            'body' => 'required',
-        ]);
-
-        //Persist the new resource
-        $article = new Article();
-        $article->title = request('title');
-        $article->excerpt = request('excerpt');
-        $article->body = request('body');
-        $article->save();
+        Article::create($this->validateArticle());
 
         return redirect('/articles');
     }
 
-    public function edit($id)
+    public function edit(Article $article) //Show a view to edit an existing resource
     {
-        //Show a view to edit an existing resource
-
         //Find the article associated with the id
-        $article = Article::find($id);
+        // $article = Article::find($id);
 
         return view('articles.edit', compact('article'));
     }
 
-    public function update($id)
+    public function update(Article $article) //Persist the editted resource
     {
-        //Persist the editted resource
 
         //validation
-        request()->validate([
-            'title' => 'required',
-            'excerpt' => 'required',
-            'body' => 'required',
-        ]);
+        $validatedAttributes = $this->validateArticle();
 
-        //Find the article associated with the id
-        $article = Article::find($id);
-
-        $article->title = request('title');
-        $article->excerpt = request('excerpt');
-        $article->body = request('body');
-        $article->save();
+        $article->update($validatedAttributes);
 
         return redirect('/articles/' . $article->id);
     }
@@ -94,5 +70,14 @@ class ArticlesController extends Controller
     public function destroy()
     {
         //Delete the resource
+    }
+
+    protected function validateArticle() //If there is a new field, just add it here for validation
+    {
+        return request()->validate([
+            'title' => 'required',
+            'excerpt' => 'required',
+            'body' => 'required',
+        ]);
     }
 }
