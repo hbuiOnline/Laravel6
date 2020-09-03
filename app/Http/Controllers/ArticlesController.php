@@ -36,7 +36,6 @@ class ArticlesController extends Controller
     public function create()
     {
         //Shows a view to create a new resource
-
         return view('articles.create');
     }
 
@@ -45,14 +44,13 @@ class ArticlesController extends Controller
         //validation
         Article::create($this->validateArticle());
 
-        return redirect('/articles');
+        return redirect(route('articles.index'));
     }
 
     public function edit(Article $article) //Show a view to edit an existing resource
     {
         //Find the article associated with the id
         // $article = Article::find($id);
-
         return view('articles.edit', compact('article'));
     }
 
@@ -61,10 +59,10 @@ class ArticlesController extends Controller
 
         //validation
         $validatedAttributes = $this->validateArticle();
-
         $article->update($validatedAttributes);
 
-        return redirect('/articles/' . $article->id);
+        // return redirect('/articles/' . $article->id);
+        return redirect($article->path());
     }
 
     public function destroy()
