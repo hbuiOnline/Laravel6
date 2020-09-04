@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Article;
+use App\Tag;
 use Illuminate\Http\Request;
 
 class ArticlesController extends Controller
@@ -11,14 +12,16 @@ class ArticlesController extends Controller
     // 7 RESTful API control actions
     //Show ALL, show specific, create, store, edit, update, destroy
 
-    public function index() //Show all
+    public function index() //Show all, //Render a list of a resource
     {
-        //Render a list of a resource
-
-        $article = Article::latest()->get();
+        if (request('tag')) {
+            $articles = Tag::where('name', request('tag'))->firstOrfail()->articles;
+        } else {
+            $articles = Article::latest()->get();
+        }
 
         return view('articles.index', [ //articles.index (folder->file)
-            'articles' => $article
+            'articles' => $articles
         ]);
     }
 
@@ -33,16 +36,26 @@ class ArticlesController extends Controller
         ]);
     }
 
-    public function create()
+    public function create() //Shows a view to create a new resource
     {
-        //Shows a view to create a new resource
-        return view('articles.create');
+        return view('articles.create', [
+            'tags' => Tag::all()
+        ]);
     }
 
     public function store() //Persist the new resource
     {
+        // dd(request()->all());
+        // $article = Article::create($this->validateArticle());
+
         //validation
-        Article::create($this->validateArticle());
+        $this->validateArticle();
+
+        $article = new Article(request(['title', 'excerpt', 'body']));
+        $article->user_id = 1; //auth()->id()
+        $article->save();
+
+        $article->tags()->attach(request('tags')); // [1,2,3]
 
         return redirect(route('articles.index'));
     }
@@ -76,6 +89,7 @@ class ArticlesController extends Controller
             'title' => 'required',
             'excerpt' => 'required',
             'body' => 'required',
+            'tags' => 'exists:tags,id'
         ]);
     }
 }
